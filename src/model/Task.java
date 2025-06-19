@@ -3,11 +3,14 @@ package model;
 import model.enums.Priority; // Import the Priority enum
 import model.enums.Status;   // Import the Status enum
 import java.util.Objects; // Used for Objects.equals and Objects.hash for good practice
-
+import java.util.List;    // For associated labels
+import java.util.ArrayList; // For initializing the list
 /**
  * Represents a single task in the intelliTask system.
  * This class is a Plain Old Java Object (POJO) and serves as a core domain model.
  * It primarily holds data related to a task and should not contain complex business logic.
+ *
+ * UPDATED: Added support for associating labels.
  */
 public class Task {
     private String id;          // Unique identifier for the task
@@ -15,6 +18,7 @@ public class Task {
     private boolean isCompleted; // Status of the task (completed or not)
     private Priority priority;  // The priority level of the task
     private Status status;      // The current status of the task
+    private List<String> labelIds; // List of IDs of labels associated with this task
 
     /**
      * Constructor to create a new Task instance.
@@ -46,11 +50,20 @@ public class Task {
         this.isCompleted = isCompleted;
         this.priority = priority;
         this.status = status;
+        this.labelIds = new ArrayList<>(); // Initialize an empty list for labels
     }
 
     // Overloaded constructor for simpler task creation, defaulting priority and status
     public Task(String id, String description, boolean isCompleted) {
         this(id, description, isCompleted, Priority.NONE, Status.PENDING);
+    }
+
+    // New constructor to also initialize with labels if provided (e.g., during deserialization)
+    public Task(String id, String description, boolean isCompleted, Priority priority, Status status, List<String> labelIds) {
+        this(id, description, isCompleted, priority, status); // Call existing constructor
+        if (labelIds != null) {
+            this.labelIds.addAll(labelIds); // Add all provided labels
+        }
     }
 
 
@@ -68,6 +81,17 @@ public class Task {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Sets the description of the task.
+     * @param description The new description.
+     */
+    public void setDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Task description cannot be empty.");
+        }
+        this.description = description;
     }
 
     /**
@@ -141,6 +165,55 @@ public class Task {
     }
 
     /**
+     * Retrieves a copy of the list of label IDs associated with this task.
+     * @return A new List containing the label IDs.
+     */
+    public List<String> getLabelIds() {
+        return new ArrayList<>(labelIds); // Return a defensive copy
+    }
+
+    /**
+     * Sets the list of label IDs for this task.
+     * This method is typically used by services or during deserialization.
+     * @param labelIds The new list of label IDs.
+     */
+    public void setLabelIds(List<String> labelIds) {
+        this.labelIds.clear();
+        if (labelIds != null) {
+            // Ensure unique labels if adding directly, or rely on calling service.
+            // For now, just add all, and service will manage uniqueness.
+            this.labelIds.addAll(labelIds);
+        }
+    }
+
+    /**
+     * Adds a label ID to the task's list of associated labels.
+     * @param labelId The ID of the label to add.
+     * @return true if the label was added, false if it was already present.
+     */
+    public boolean addLabel(String labelId) {
+        if (labelId == null || labelId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Label ID cannot be null or empty.");
+        }
+        if (!labelIds.contains(labelId)) {
+            return labelIds.add(labelId);
+        }
+        return false;
+    }
+
+    /**
+     * Removes a label ID from the task's list of associated labels.
+     * @param labelId The ID of the label to remove.
+     * @return true if the label was removed, false if it was not found.
+     */
+    public boolean removeLabel(String labelId) {
+        if (labelId == null || labelId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Label ID cannot be null or empty.");
+        }
+        return labelIds.remove(labelId);
+    }
+
+    /**
      * Generates a string representation of the Task object.
      * This is useful for debugging and logging.
      * @return A string showing the task's ID, description, completion status, priority, and current status.
@@ -153,6 +226,7 @@ public class Task {
                 ", isCompleted=" + isCompleted +
                 ", priority=" + priority +
                 ", status=" + status +
+                ", labelIds=" + labelIds +
                 '}';
     }
 

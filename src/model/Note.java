@@ -1,13 +1,19 @@
+// src/main/java/com/intelliTask/core/model/Note.java
+
 package model;
 
 import java.time.LocalDateTime; // For tracking creation and modification timestamps
 import java.util.Objects;       // For Objects.equals and Objects.hash
+import java.util.List;          // For associated labels
+import java.util.ArrayList;     // For initializing the list
 
 /**
  * Represents a single note in the intelliTask system.
  * This class is a Plain Old Java Object (POJO) and serves as a core domain model.
  * It primarily holds data related to a note, such as its title, content,
  * and timestamps for creation and last modification.
+ *
+ * UPDATED: Added support for associating labels.
  */
 public class Note {
     private String id;               // Unique identifier for the note
@@ -15,6 +21,7 @@ public class Note {
     private String content;          // The main content of the note
     private LocalDateTime createdAt;  // Timestamp when the note was created
     private LocalDateTime lastModifiedAt; // Timestamp when the note was last modified
+    private List<String> labelIds;   // List of IDs of labels associated with this note
 
     /**
      * Constructor to create a new Note instance.
@@ -40,6 +47,23 @@ public class Note {
         this.content = content;
         this.createdAt = LocalDateTime.now(); // Set creation time automatically
         this.lastModifiedAt = this.createdAt; // Initially, last modified is same as created
+        this.labelIds = new ArrayList<>(); // Initialize an empty list for labels
+    }
+
+    /**
+     * Overloaded constructor to create a new Note instance, including initial labels.
+     * This is useful for deserialization or when creating notes with pre-defined labels.
+     *
+     * @param id The unique ID for the note.
+     * @param title The title of the note.
+     * @param content The main content of the note.
+     * @param labelIds An initial list of label IDs to associate with the note.
+     */
+    public Note(String id, String title, String content, List<String> labelIds) {
+        this(id, title, content); // Call the primary constructor
+        if (labelIds != null) {
+            this.labelIds.addAll(labelIds); // Add all provided labels
+        }
     }
 
     /**
@@ -85,7 +109,7 @@ public class Note {
      * @param content The new content.
      */
     public void setContent(String content) {
-        // Content can be empty, but we can check for null to prevent NullPointerExceptions
+        // Content can be empty, so we can check for null to prevent NullPointerExceptions
         if (content == null) {
             this.content = ""; // Default to empty string if null is provided
         } else {
@@ -110,16 +134,57 @@ public class Note {
         return lastModifiedAt;
     }
 
-    // Setter for lastModifiedAt is made protected/package-private or removed
-    // if we want to strictly control when it's updated (e.g., only via setTitle/setContent)
-    // For now, we'll keep it private to ensure it's updated internally.
-    // However, if persistence layer needs to set it directly during loading,
-    // a protected/package-private setter or constructor parameter might be added.
-    // For simplicity of this POJO, we'll assume setters manage it.
+    /**
+     * Retrieves a copy of the list of label IDs associated with this note.
+     * @return A new List containing the label IDs.
+     */
+    public List<String> getLabelIds() {
+        return new ArrayList<>(labelIds); // Return a defensive copy
+    }
+
+    /**
+     * Sets the list of label IDs for this note.
+     * This method is typically used by services or during deserialization.
+     * @param labelIds The new list of label IDs.
+     */
+    public void setLabelIds(List<String> labelIds) {
+        this.labelIds.clear();
+        if (labelIds != null) {
+            // Ensure uniqueness if desired, though service might handle this.
+            this.labelIds.addAll(labelIds);
+        }
+    }
+
+    /**
+     * Adds a label ID to the note's list of associated labels.
+     * @param labelId The ID of the label to add.
+     * @return true if the label was added, false if it was already present.
+     */
+    public boolean addLabel(String labelId) {
+        if (labelId == null || labelId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Label ID cannot be null or empty.");
+        }
+        if (!labelIds.contains(labelId)) {
+            return labelIds.add(labelId);
+        }
+        return false;
+    }
+
+    /**
+     * Removes a label ID from the note's list of associated labels.
+     * @param labelId The ID of the label to remove.
+     * @return true if the label was removed, false if it was not found.
+     */
+    public boolean removeLabel(String labelId) {
+        if (labelId == null || labelId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Label ID cannot be null or empty.");
+        }
+        return labelIds.remove(labelId);
+    }
 
     /**
      * Generates a string representation of the Note object.
-     * @return A string showing the note's ID, title, creation time, and last modification time.
+     * @return A string showing the note's ID, title, creation time, last modification time, and associated label IDs.
      */
     @Override
     public String toString() {
@@ -128,6 +193,7 @@ public class Note {
                 ", title='" + title + '\'' +
                 ", createdAt=" + createdAt +
                 ", lastModifiedAt=" + lastModifiedAt +
+                ", labelIds=" + labelIds +
                 '}';
     }
 

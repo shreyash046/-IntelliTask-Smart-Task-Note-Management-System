@@ -118,6 +118,20 @@ public interface TaskService {
     Task markTaskCompleted(String taskId, boolean completed);
 
 
+
+    /**
+     * Updates the list of label IDs associated with an existing task.
+     * This method is primarily used by the LabelService to manage associations.
+     *
+     * @param taskId The ID of the task to update.
+     * @param newLabelIds The new list of label IDs to associate with the task.
+     * @return The updated Task object.
+     * @throws IllegalArgumentException if taskId or newLabelIds is invalid.
+     * @throws RuntimeException if the task with the given ID is not found.
+     */
+    Task updateTaskLabels(String taskId, List<String> newLabelIds);
+
+
     /**
      * Deletes a task from the system.
      *

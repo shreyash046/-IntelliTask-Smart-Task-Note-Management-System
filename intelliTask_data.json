@@ -1,0 +1,23 @@
+{
+  "reminders": {},
+  "notes": {},
+  "projects": {},
+  "users": {
+    "e5ca26a0-d7a2-4cd3-bda5-789898e76896": {
+      "id": "e5ca26a0-d7a2-4cd3-bda5-789898e76896",
+      "username": "cli_user",
+      "email": "cli_user@intelliTask.com"
+    }
+  },
+  "tasks": {
+    "d0164ebd-0ffe-48ba-8ae6-2aefff48be23": {
+      "id": "d0164ebd-0ffe-48ba-8ae6-2aefff48be23",
+      "description": "\u003cA new Task\u003e \u003cLow\u003e",
+      "isCompleted": false,
+      "priority": "NONE",
+      "status": "PENDING",
+      "labelIds": []
+    }
+  },
+  "labels": {}
+}

@@ -1,3 +1,5 @@
+// src/main/java/com/intelliTask/core/service/NoteService.java
+
 package service;
 
 import model.Note;
@@ -14,6 +16,8 @@ import java.time.LocalDateTime; // For potentially setting reminder times or fil
  * of data access.
  *
  * All methods here reflect business operations, not low-level data storage details.
+ *
+ * UPDATED: Added method for managing note labels.
  */
 public interface NoteService {
 
@@ -64,6 +68,18 @@ public interface NoteService {
      * @throws RuntimeException if the note with the given ID is not found. (Placeholder for custom exception)
      */
     Note updateNoteContent(String noteId, String newContent);
+
+    /**
+     * Updates the list of label IDs associated with an existing note.
+     * This method is primarily used by the LabelService to manage associations.
+     *
+     * @param noteId The ID of the note to update.
+     * @param newLabelIds The new list of label IDs to associate with the note.
+     * @return The updated Note object.
+     * @throws IllegalArgumentException if noteId or newLabelIds is invalid.
+     * @throws RuntimeException if the note with the given ID is not found.
+     */
+    Note updateNoteLabels(String noteId, List<String> newLabelIds);
 
     /**
      * Deletes a note from the system.

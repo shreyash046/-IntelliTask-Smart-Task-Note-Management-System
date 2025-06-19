@@ -174,10 +174,12 @@ public class Project {
      * Updates the 'lastModifiedAt' timestamp.
      * @param taskId The ID of the task to remove.
      */
-    public void removeTask(String taskId) {
+    public boolean removeTask(String taskId) {
         if (taskId != null && taskIds.remove(taskId)) {
-            this.lastModifiedAt = LocalDateTime.now(); // Update modification time
+            this.lastModifiedAt = LocalDateTime.now();
+            return true;// Update modification time
         }
+        return false;
     }
 
     /**
