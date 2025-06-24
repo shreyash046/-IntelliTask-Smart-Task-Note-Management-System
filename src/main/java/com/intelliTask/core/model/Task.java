@@ -1,4 +1,4 @@
-package model;
+package com.intelliTask.core.model;
 
 import model.enums.Priority; // Import the Priority enum
 import model.enums.Status;   // Import the Status enum

@@ -1,4 +1,4 @@
-package model;
+package com.intelliTask.core.model;
 
 import java.util.Objects; // For Objects.equals and Objects.hash
 
