@@ -1,4 +1,4 @@
-package model.enums;
+package com.intelliTask.core.model.enums;
 
 public enum Status {
     PENDING,        // Item has not yet started

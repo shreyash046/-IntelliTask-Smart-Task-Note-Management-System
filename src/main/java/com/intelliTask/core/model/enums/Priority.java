@@ -1,4 +1,4 @@
-package model.enums;
+package com.intelliTask.core.model.enums;
 
 /**
  * Represents the priority level of a task or project.
